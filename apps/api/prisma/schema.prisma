@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  username  String
+  authInfo  AuthInfo?
+  profile   Profile?
+  role      UserRole  @default(User)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   Boolean   @default(false)
+
+  @@map("users")
+}
+
+model AuthInfo {
+  id           Int            @id @default(autoincrement())
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       Int            @unique
+  confirmed    Boolean        @default(false)
+  authType     AuthType
+  localAuth    LocalAuth?
+  socialAuth   SocialAuth?
+  refreshToken RefreshToken[]
+}
+
+model LocalAuth {
+  id               Int      @id @default(autoincrement())
+  AuthInfo         AuthInfo @relation(fields: [authInfoId], references: [id], onDelete: Cascade)
+  authInfoId       Int      @unique
+  email            String   @unique
+  password         String?
+  verificationCode String?
+  otpCode          String?
+  expiryCode       DateTime
+}
+
+model SocialAuth {
+  id         Int      @id @default(autoincrement())
+  AuthInfo   AuthInfo @relation(fields: [authInfoId], references: [id], onDelete: Cascade)
+  authInfoId Int      @unique
+  email      String   @unique
+  provider   String
+}
+
+model RefreshToken {
+  id          Int       @id @default(autoincrement())
+  hashedToken String
+  revoked     Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  AuthInfo    AuthInfo? @relation(fields: [authInfoId], references: [id], onDelete: Cascade)
+  authInfoId  Int?
+}
+
+model Profile {
+  id          Int     @id @default(autoincrement())
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int     @unique
+  bio         String?
+  phoneNumber String?
+  image       String?
+}
+
+// enums
+enum AuthType {
+  Local
+  Social
+}
+
+enum UserRole {
+  User
+  Admin
+  SuperAdmin
+}
