@@ -10,7 +10,7 @@ datasource db {
 model User {
   id        Int       @id @default(autoincrement())
   email     String    @unique
-  username  String
+  username  String?
   authInfo  AuthInfo?
   profile   Profile?
   role      UserRole  @default(User)
@@ -33,14 +33,14 @@ model AuthInfo {
 }
 
 model LocalAuth {
-  id               Int      @id @default(autoincrement())
-  AuthInfo         AuthInfo @relation(fields: [authInfoId], references: [id], onDelete: Cascade)
-  authInfoId       Int      @unique
-  email            String   @unique
+  id               Int       @id @default(autoincrement())
+  AuthInfo         AuthInfo  @relation(fields: [authInfoId], references: [id], onDelete: Cascade)
+  authInfoId       Int       @unique
+  email            String    @unique
   password         String?
   verificationCode String?
   otpCode          String?
-  expiryCode       DateTime
+  expiryCode       DateTime?
 }
 
 model SocialAuth {
@@ -65,6 +65,7 @@ model Profile {
   id          Int     @id @default(autoincrement())
   user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int     @unique
+  username    String?
   bio         String?
   phoneNumber String?
   image       String?

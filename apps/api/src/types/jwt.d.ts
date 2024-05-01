@@ -13,4 +13,5 @@ export interface IParsedToken {
   exp: number;
   userId: number;
   role: string;
+  email: string;
 }

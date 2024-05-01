@@ -29,6 +29,7 @@ export async function sendEmail(type: EmailType, payload: IEmailPayload) {
         name: 'Alfian',
         message: 'Hello World',
         email: payload.email,
+        url: payload.url,
       }),
     });
   } catch (error) {

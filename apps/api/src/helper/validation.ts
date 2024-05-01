@@ -1,21 +1,26 @@
 import { Request, Response, NextFunction } from 'express';
-import { ZodObject, ZodType } from 'zod';
+import { z, ZodObject, ZodType } from 'zod';
+
+export enum ValidationType {
+  body = 'body',
+  query = 'query',
+  params = 'params',
+}
 
 export class Validation {
   static validate<T>(schema: ZodType, data: T): T {
     return schema.parse(data);
   }
-
-  static validateBody<T>(schema: ZodObject<any, any>) {
-    return (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const data = req.body;
-        const validatedData = schema.parse(data);
-        req.body = validatedData;
-        next();
-      } catch (error) {
-        next(error);
-      }
-    };
-  }
 }
+
+export const validateRequest =
+  (schema: ZodType, type: ValidationType) => async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = z.object({ [type]: schema });
+      const data = await result.parseAsync({ [type]: req[type] });
+      req[type] = data[type];
+      return next();
+    } catch (error) {
+      next(error);
+    }
+  };

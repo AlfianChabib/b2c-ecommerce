@@ -1,4 +1,4 @@
-import express, { Express, json, NextFunction, Request, Response, urlencoded } from 'express';
+import express, { Express, json, Request, Response, urlencoded } from 'express';
 import path from 'path';
 import cors from 'cors';
 import env from '../config';
@@ -18,6 +18,7 @@ export default class App {
     this.app = express();
     this.passport = passport;
     this.configure();
+    this.passportStrategy();
     this.route();
     this.handleError();
   }
@@ -28,9 +29,12 @@ export default class App {
     this.app.use(cookieParser());
     this.app.use(urlencoded({ extended: true }));
     this.app.use(deserializeUser);
-    this.passport.use(strategies.google);
     this.app.use(passport.initialize());
     this.app.use(express.static(path.join(__dirname, '../../public')));
+  }
+
+  private passportStrategy() {
+    this.passport.use(strategies.google);
   }
 
   private handleError() {

@@ -19,7 +19,40 @@ export interface ResponseSocialAuth extends User {
   email: string;
 }
 
+export type RegisterEmail = {
+  email: string;
+};
+
+export interface RegisterEmailPayload {
+  email: string;
+}
+
+export interface ResponseRegisterEmail {
+  email: string;
+  url: string;
+}
+
 export type RefreshTokenPayload = {
   refreshToken: string;
   userId: number;
+};
+
+export type CheckTokenPayload = {
+  token: string;
+};
+
+export type CompleteRegisterPayload = {
+  token: string;
+  username: string;
+  password: string;
+};
+
+export type LoginPayload = {
+  email: string;
+  password: string;
+};
+
+export type ResponseLogin = {
+  accessToken: string;
+  refreshToken: string;
 };

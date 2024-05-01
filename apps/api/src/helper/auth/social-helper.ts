@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { Profile, VerifyCallback } from 'passport-google-oauth20';
-import { generateTokens } from '../jwt/token-helper';
+import { generateTokens, sendRefreshToken } from '../jwt/token-helper';
 import { User } from '@prisma/client';
 import { EmailType, sendEmail } from '../email/email-helper';
 import { AuthService } from '../../service/auth-service';
@@ -35,7 +35,7 @@ export const callbackHelper = async (user: User, err: Error, res: Response, next
 
     const { accessToken, refreshToken } = generateTokens({ userId: user.id, email: user.email, role: user.role });
     await AuthService.addRefreshToken({ refreshToken: refreshToken, userId: user.id });
-    await AuthService.sendRefreshToken(res, refreshToken);
+    await sendRefreshToken(res, refreshToken);
 
     return res.redirect(`${process.env.BASE_FRONTEND_URL}/login?accessToken=${accessToken}`);
   } catch (error) {
