@@ -13,7 +13,7 @@ export default function SocialButton(props: SocialButtonProps) {
   }
 
   return (
-    <Button onClick={onClick} size="sm" className="capitalize">
+    <Button onClick={onClick} size="sm" className="capitalize w-full">
       {/* <span>{image}</span> */}
       <Image src="/icons/google.svg" alt="Google Icon" width={22} height={22} />
       {props.provider}
